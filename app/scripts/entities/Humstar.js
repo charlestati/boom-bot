@@ -15,9 +15,7 @@ class Humstar extends Player {
 
     this.sprite.anchor.setTo(0.5, 0.5);
 
-    // todo Increase acceleration
-    this.sprite.body.acceleration.x = 1000;
-    this.sprite.body.maxAcceleration = 10;
+    this.acceleration = 1000;
     this.sprite.body.drag.x = 300;
     this.sprite.body.maxVelocity.x = 250;
     this.sprite.body.maxVelocity.y = 1000;
@@ -33,10 +31,26 @@ class Humstar extends Player {
     this.weaponReloadTime = 1500;
     this.ammo = this.weaponMagazine;
     this.shootKnockback = 5000;
+
+    this.fallPosition = this.sprite.y;
+    this.falling = false;
   }
 
   update() {
     super.update();
+
+    if (this.controls.down.isDown) {
+      if (!this.falling) {
+        this.sprite.body.checkCollision.down = false;
+        this.fallPosition = this.sprite.y;
+        this.falling = true;
+      }
+    } else if (!this.sprite.body.checkCollision.down) {
+      if (this.sprite.y > this.fallPosition + 10) {
+        this.sprite.body.checkCollision.down = true;
+        this.falling = false;
+      }
+    }
 
     if (this.controls.left.isDown) {
       this.sprite.angle = -20;
