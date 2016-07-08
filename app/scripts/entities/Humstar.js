@@ -30,7 +30,7 @@ class Humstar extends Player {
     this.weaponMagazine = 12;
     this.weaponReloadTime = 1500;
     this.ammo = this.weaponMagazine;
-    this.shootKnockback = 5000;
+    this.shootKnockback = 8000;
 
     this.fallPosition = this.sprite.y;
     this.falling = false;
@@ -81,7 +81,7 @@ class Humstar extends Player {
     }
 
     if (this.facing === 'left') {
-      bullet.reset(this.sprite.x - this.sprite.width / 2 + 8, this.sprite.y);
+      bullet.reset(this.sprite.x - this.sprite.width / 2, this.sprite.y);
       bullet.body.velocity.x = this.bulletSpeed * -1;
       this.sprite.body.acceleration.x = this.shootKnockback;
     } else {

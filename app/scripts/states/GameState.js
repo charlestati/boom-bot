@@ -39,7 +39,19 @@ class GameState extends Phaser.State {
     for (let i = 0; i < this.players.length; ++i) {
       this.physics.arcade.collide(this.players[i].sprite, this.collisionsLayer);
       this.players[i].update();
+
+      this.physics.arcade.overlap(this.bullets,
+        this.players[i].sprite,
+        this.collisionHandler,
+        null,
+        this);
     }
+  }
+
+  collisionHandler(player, bullet) {
+    console.log(player);
+    console.log(bullet);
+    bullet.kill();
   }
 
   setupBullets() {
@@ -51,6 +63,7 @@ class GameState extends Phaser.State {
     this.bullets.setAll('checkWorldBounds', true);
     this.bullets.setAll('outOfBoundsKill', true);
     this.bullets.setAll('angle', 90);
+    this.bullets.setAll('anchor', 0.5);
   }
 
   setupPlayers() {
