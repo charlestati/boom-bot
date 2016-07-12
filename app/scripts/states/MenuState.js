@@ -1,5 +1,11 @@
 class MenuState extends Phaser.State {
   create() {
+    // todo Just for faster dev
+    this.state.start('game');
+    return;
+
+    // todo Show Menu: Local multiplayer & Online play
+
     this.add.text(80, this.world.height - 80, 'Press Enter to play', {
       font: '25px Arial',
       fill: '#333333',

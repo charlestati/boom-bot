@@ -19,6 +19,10 @@ class LoadState extends Phaser.State {
     this.load.audio('sonic4', 'audio/sonic4.mp3');
     this.load.audio('win', 'audio/win.mp3');
     this.load.audio('loss', 'audio/loss.mp3');
+
+    this.load.audio('reload', 'audio/reload.mp3');
+    this.load.audio('shell', 'audio/shell.mp3');
+    this.load.audio('shoot', 'audio/shoot.mp3');
   }
 
   create() {
