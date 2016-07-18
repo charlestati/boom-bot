@@ -45,6 +45,8 @@ class Humstar extends Player {
     this.nextGrenade = 0;
     this.grenades = 3;
     this.grenadeRate = 200;
+    this.grenadeStrength = 0;
+    this.grenadeStrengthMax = 100;
   }
 
   update() {
@@ -119,6 +121,15 @@ class Humstar extends Player {
     } else {
       this.sprite.angle = 0;
     }
+
+    if (this.controls.grenade.isDown && this.grenades > 0) {
+      console.log(this.grenadeStrength)
+      if (this.grenadeStrength < this.grenadeStrengthMax) {
+        this.grenadeStrength += 1;
+      }
+    } else if (this.grenadeStrength > 0) {
+      this.throwGrenade(this.grenadeStrength);
+    }
   }
 
   fire() {
@@ -160,9 +171,6 @@ class Humstar extends Player {
   }
 
   throwGrenade() {
-    // todo Fix grenade spawn
-    return;
-
     if (this.grenades <= 0
       || this.state.time.now < this.nextGrenade
       || this.state.grenades.countDead() <= 0) {
@@ -170,18 +178,45 @@ class Humstar extends Player {
     }
 
     const grenade = this.state.grenades.getFirstDead();
-
-    grenade.body.gravity.y = 1500;
-    grenade.body.bounce.y = 0.4;
-    grenade.body.drag.x = 100;
     grenade.reset(this.sprite.x, this.sprite.y);
 
     this.state.physics.arcade.velocityFromRotation(this.facing === 'right' ? -45 : -90,
-      300,
+      this.grenadeStrength * 10,
       grenade.body.velocity);
 
     this.grenades -= 1;
     this.nextGrenade = this.state.time.now + this.grenadeRate;
+    this.grenadeStrength = 0.0;
+
+    this.state.time.events.add(1800, () => {
+      for (let i = 0; i < this.state.players.length; ++i) {
+        const explosion = this.state.add.sprite(grenade.x, grenade.y, 'explosion');
+        explosion.anchor.x = 0.5;
+        explosion.anchor.y = 0.8;
+        explosion.animations.add('explode');
+        explosion.animations.play('explode', 24, false, true);
+
+        const player = this.state.players[i];
+        player.sprite.body.maxVelocity.x = 1000;
+
+        const distance = this.state.physics.arcade.distanceBetween(grenade,
+          this.state.players[i].sprite);
+
+        grenade.y -= 20;
+        const angle = this.state.physics.arcade.angleBetween(grenade,
+          player.sprite);
+
+        this.state.physics.arcade.velocityFromRotation(angle,
+          (1 / distance) * 100000,
+          player.sprite.body.velocity);
+
+        grenade.kill();
+
+        this.state.time.events.add(Phaser.Timer.HALF, () => {
+          player.sprite.body.maxVelocity.x = 250;
+        }, this);
+      }
+    }, this);
   }
 
   die() {

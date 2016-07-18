@@ -92,10 +92,6 @@ class Player {
     if (this.controls.shoot.isDown) {
       this.fire();
     }
-
-    if (this.controls.grenade.isDown) {
-      this.throwGrenade();
-    }
   }
 
   die() {

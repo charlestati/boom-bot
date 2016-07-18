@@ -128,8 +128,12 @@ class GameState extends Phaser.State {
     this.grenades.physicsBodyType = Phaser.Physics.ARCADE;
 
     this.grenades.createMultiple(50, 'grenade');
-    this.grenades.anchor = 0.5;
-    this.grenades.scale.set(0.5);
+    this.grenades.setAll('anchor.x', 0.5);
+    this.grenades.setAll('anchor.y', 0.5);
+    this.grenades.setAll('body.gravity.y', 1500);
+    this.grenades.setAll('body.bounce.y', 0.4);
+    this.grenades.setAll('body.bounce.x', 0.4);
+    this.grenades.setAll('body.drag.x', 150);
   }
 
   setupBullets() {
@@ -138,9 +142,12 @@ class GameState extends Phaser.State {
     this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
 
     this.bullets.createMultiple(50, 'bullet');
+    // todo Allow bullets to go or come from out of bounds for skilled shots
     this.bullets.setAll('checkWorldBounds', true);
     this.bullets.setAll('outOfBoundsKill', true);
     this.bullets.setAll('angle', 90);
+    this.bullets.setAll('anchor.x', 0.5);
+    this.bullets.setAll('anchor.y', 0.5);
   }
 
   setupHud() {
@@ -150,8 +157,14 @@ Blue: ${this.players[1].lives}`,
         font: '16px Arial',
         fill: '#ffffff',
       });
-    this.ammoText = this.add.text(10, 80, `Red: ${this.players[0].ammo} bullets
+    this.ammoText = this.add.text(100, 10, `Red: ${this.players[0].ammo} bullets
 Blue: ${this.players[1].ammo} bullets`,
+      {
+        font: '16px Arial',
+        fill: '#ffffff',
+      });
+    this.grenadesText = this.add.text(250, 10, `Red: ${this.players[0].grenades}
+Blue: ${this.players[1].grenades}`,
       {
         font: '16px Arial',
         fill: '#ffffff',
@@ -163,6 +176,8 @@ Blue: ${this.players[1].ammo} bullets`,
 Blue: ${this.players[1].lives}`);
     this.ammoText.setText(`Red: ${this.players[0].ammo} bullets
 Blue: ${this.players[1].ammo} bullets`);
+    this.grenadesText.setText(`Red: ${this.players[0].grenades} grenades
+Blue: ${this.players[1].grenades} grenades`);
   }
 
   stop() {
