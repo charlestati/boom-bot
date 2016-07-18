@@ -14,10 +14,10 @@ class GameState extends Phaser.State {
     this.collisionsLayer = this.tilemap.createLayer('collisions');
     this.tilemap.setCollisionBetween(1, 10000, true, this.collisionsLayer);
 
-    // todo Fix the players falling through the platforms
+    // todo Fix players falling through the platforms after spawning
     this.setupPlayers();
 
-    // todo Check how to follow two players
+    // todo Follow all the players
     // this.camera.follow(this.players[0].sprite, Phaser.Camera.FOLLOW_PLATFORMER);
 
     this.setupBullets();
@@ -25,10 +25,14 @@ class GameState extends Phaser.State {
     this.music = this.add.audio('sonic1');
     this.music.loopFull(1);
 
+    this.hitSound = this.add.audio('hit');
+
     this.setupHud();
 
+    this.setupGrenades();
+
     // todo Debug
-    const debug = true;
+    const debug = false;
     if (debug) {
       this.collisionsLayer.debug = true;
     } else {
@@ -51,6 +55,8 @@ class GameState extends Phaser.State {
       this.collisionsLayer,
       this.collisionsLayerHandler, null, this);
 
+    this.physics.arcade.collide(this.grenades, this.collisionsLayer);
+
     this.updateHud();
   }
 
@@ -60,6 +66,8 @@ class GameState extends Phaser.State {
     }
 
     player.body.maxVelocity.x = 1000;
+
+    this.hitSound.play();
 
     // todo Wrong direction when players overlap
     if (bullet.x < player.x) {
@@ -81,20 +89,9 @@ class GameState extends Phaser.State {
     }
   }
 
-  setupBullets() {
-    this.bullets = this.add.group();
-    this.bullets.enableBody = true;
-    this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
-
-    this.bullets.createMultiple(50, 'bullet');
-    this.bullets.setAll('checkWorldBounds', true);
-    this.bullets.setAll('outOfBoundsKill', true);
-    this.bullets.setAll('angle', 90);
-  }
-
   setupPlayers() {
     const spawnRange = [
-      [100, 600],
+      [200, 600],
     ];
 
     this.input.gamepad.start();
@@ -125,13 +122,36 @@ class GameState extends Phaser.State {
     this.players[1].sprite.loadTexture('humstar_blue', 0, false);
   }
 
+  setupGrenades() {
+    this.grenades = this.add.group();
+    this.grenades.enableBody = true;
+    this.grenades.physicsBodyType = Phaser.Physics.ARCADE;
+
+    this.grenades.createMultiple(50, 'grenade');
+    this.grenades.anchor = 0.5;
+    this.grenades.scale.set(0.5);
+  }
+
+  setupBullets() {
+    this.bullets = this.add.group();
+    this.bullets.enableBody = true;
+    this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
+
+    this.bullets.createMultiple(50, 'bullet');
+    this.bullets.setAll('checkWorldBounds', true);
+    this.bullets.setAll('outOfBoundsKill', true);
+    this.bullets.setAll('angle', 90);
+  }
+
   setupHud() {
-    this.scoreText = this.add.text(10, 10, `Red: ${this.players[0].lives}\nBlue: ${this.players[1].lives}`,
+    this.scoreText = this.add.text(10, 10, `Red: ${this.players[0].lives}
+Blue: ${this.players[1].lives}`,
       {
         font: '16px Arial',
         fill: '#ffffff',
       });
-    this.ammoText = this.add.text(10, 80, `Red: ${this.players[0].ammo} bullets\nBlue: ${this.players[1].ammo} bullets`,
+    this.ammoText = this.add.text(10, 80, `Red: ${this.players[0].ammo} bullets
+Blue: ${this.players[1].ammo} bullets`,
       {
         font: '16px Arial',
         fill: '#ffffff',
@@ -139,8 +159,10 @@ class GameState extends Phaser.State {
   }
 
   updateHud() {
-    this.scoreText.setText(`Red: ${this.players[0].lives}\nBlue: ${this.players[1].lives}`);
-    this.ammoText.setText(`Red: ${this.players[0].ammo} bullets\nBlue: ${this.players[1].ammo} bullets`);
+    this.scoreText.setText(`Red: ${this.players[0].lives}
+Blue: ${this.players[1].lives}`);
+    this.ammoText.setText(`Red: ${this.players[0].ammo} bullets
+Blue: ${this.players[1].ammo} bullets`);
   }
 
   stop() {

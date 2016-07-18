@@ -94,7 +94,7 @@ class Player {
     }
 
     if (this.controls.grenade.isDown) {
-      console.log('boom!');
+      this.throwGrenade();
     }
   }
 

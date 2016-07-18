@@ -13,17 +13,20 @@ class Humstar extends Player {
     this.sprite.scale.set(2);
     this.sprite.smoothed = false;
 
-    this.sprite.anchor.setTo(0.5, 0.5);
+    this.sprite.anchor.x = 0.5;
+    this.sprite.anchor.y = 0.5;
 
     this.acceleration = 1000;
     this.sprite.body.drag.x = 300;
     this.sprite.body.maxVelocity.x = 250;
     this.sprite.body.maxVelocity.y = 1000;
     this.sprite.body.gravity.y = 1500;
+    this.sprite.body.bounce.y = 0;
 
     this.sprite.animations.add('fly', [0, 1, 2, 3, 4, 5], 10, true);
     this.sprite.animations.play('fly');
 
+    // todo Use a Weapon class
     this.nextFire = 0;
     this.fireRate = 250;
     this.bulletSpeed = 1000;
@@ -38,6 +41,10 @@ class Humstar extends Player {
     this.shootSound = this.state.add.audio('shoot');
     this.shellSound = this.state.add.audio('shell');
     this.reloadSound = this.state.add.audio('reload');
+
+    this.nextGrenade = 0;
+    this.grenades = 3;
+    this.grenadeRate = 200;
   }
 
   update() {
@@ -49,7 +56,9 @@ class Humstar extends Player {
       this.reloadSound.play();
     }
 
-    if (this.state.input.gamepad.supported && this.state.input.gamepad.active && this.controls.pad.connected) {
+    if (this.state.input.gamepad.supported
+      && this.state.input.gamepad.active
+      && this.controls.pad.connected) {
       this.listenGamepad();
     } else {
       this.listenKeyboard();
@@ -150,9 +159,35 @@ class Humstar extends Player {
     }
   }
 
+  throwGrenade() {
+    // todo Fix grenade spawn
+    return;
+
+    if (this.grenades <= 0
+      || this.state.time.now < this.nextGrenade
+      || this.state.grenades.countDead() <= 0) {
+      return;
+    }
+
+    const grenade = this.state.grenades.getFirstDead();
+
+    grenade.body.gravity.y = 1500;
+    grenade.body.bounce.y = 0.4;
+    grenade.body.drag.x = 100;
+    grenade.reset(this.sprite.x, this.sprite.y);
+
+    this.state.physics.arcade.velocityFromRotation(this.facing === 'right' ? -45 : -90,
+      300,
+      grenade.body.velocity);
+
+    this.grenades -= 1;
+    this.nextGrenade = this.state.time.now + this.grenadeRate;
+  }
+
   die() {
     super.die();
     this.ammo = this.weaponMagazine;
+    this.grenades = 3;
   }
 }
 

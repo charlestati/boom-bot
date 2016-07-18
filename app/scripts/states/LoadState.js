@@ -8,6 +8,7 @@ class LoadState extends Phaser.State {
     this.load.image('tilesheet', 'images/tilesheet.png');
     this.load.image('background', 'images/background.png');
     this.load.image('bullet', 'images/bullet.png');
+    this.load.image('grenade', 'images/grenade.png');
     this.load.spritesheet('humstar', 'images/humstar.png', 32, 32);
     this.load.spritesheet('humstar_blue', 'images/humstar_blue.png', 32, 32);
 
@@ -19,6 +20,7 @@ class LoadState extends Phaser.State {
     this.load.audio('sonic4', 'audio/sonic4.mp3');
     this.load.audio('win', 'audio/win.mp3');
     this.load.audio('loss', 'audio/loss.mp3');
+    this.load.audio('hit', 'audio/hit.mp3');
 
     this.load.audio('reload', 'audio/reload.mp3');
     this.load.audio('shell', 'audio/shell.mp3');
