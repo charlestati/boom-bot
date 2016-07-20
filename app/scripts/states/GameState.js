@@ -15,7 +15,7 @@ class GameState extends Phaser.State {
     this.tilemap.addTilesetImage('tilesheet');
 
     this.platformsLayer = this.tilemap.createLayer('platforms');
-    //this.platformsLayer.resizeWorld();
+    // this.platformsLayer.resizeWorld();
 
     this.camera.focusOnXY((width - worldOffset) / 2, (height - worldOffset) / 2);
 
@@ -27,7 +27,7 @@ class GameState extends Phaser.State {
     this.setupPlayers();
 
     // todo Follow all the players
-    //this.camera.follow(this.players[0].sprite, Phaser.Camera.FOLLOW_PLATFORMER);
+    // this.camera.follow(this.players[0].sprite, Phaser.Camera.FOLLOW_PLATFORMER);
 
     this.setupBullets();
 
