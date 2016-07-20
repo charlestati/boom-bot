@@ -137,7 +137,7 @@ class Humstar extends Player {
 
     if (this.controls.grenade.isDown && this.grenades > 0) {
       if (this.grenadeStrength < this.grenadeStrengthMax) {
-        this.grenadeStrength += 1;
+        this.grenadeStrength += 4;
       }
     } else if (this.grenadeStrength > 0) {
       this.throwGrenade(this.grenadeStrength);

@@ -24,7 +24,7 @@ class MenuState extends Phaser.State {
     enterKey.onDown.addOnce(this.start, this);
 
     this.music = this.add.audio('intro');
-    this.music.loopFull(0.8);
+    this.music.loopFull(0.5);
   }
 
   start() {

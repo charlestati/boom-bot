@@ -32,7 +32,7 @@ class GameState extends Phaser.State {
     this.setupBullets();
 
     this.music = this.add.audio('sonic1');
-    this.music.loopFull(0.8);
+    this.music.loopFull(0.5);
 
     this.hitSound = this.add.audio('hit');
 
