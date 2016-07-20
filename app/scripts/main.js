@@ -3,7 +3,8 @@ import Game from './Game';
 const game = new Game();
 
 window.onbeforeunload = () => {
-  return 'Are you sure you want to leave?';
+  const msg = 'Are you sure you want to leave?';
+  return msg;
 };
 
 game.run();

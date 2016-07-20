@@ -64,10 +64,6 @@ class Player {
     if (this.controls.pad.isDown(Phaser.Gamepad.XBOX360_RIGHT_TRIGGER)) {
       this.fire();
     }
-
-    if (this.controls.pad.isDown(Phaser.Gamepad.XBOX360_LEFT_TRIGGER)) {
-      console.log('boom!');
-    }
   }
 
   listenKeyboard() {

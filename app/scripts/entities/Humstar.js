@@ -34,7 +34,7 @@ class Humstar extends Player {
     this.weaponMagazine = 12;
     this.weaponReloadTime = 1500;
     this.ammo = this.weaponMagazine;
-    this.shootKnockback = 1200 * 30;
+    this.shootKnockback = 1500 * 30;
 
     this.fallPosition = this.sprite.y;
     this.falling = false;
@@ -159,7 +159,6 @@ class Humstar extends Player {
     bullet.shootKnockback = this.shootKnockback;
     bullet.shooter = this.sprite;
 
-    // todo Sometimes bullets go below 0
     this.ammo -= 1;
     this.sounds.play('shoot');
 
@@ -219,7 +218,7 @@ class Humstar extends Player {
           player.sprite);
 
         this.state.physics.arcade.velocityFromRotation(angle,
-          (1 / distance) * 100000,
+          (1 / distance) * 150000,
           player.sprite.body.velocity);
 
         grenade.kill();

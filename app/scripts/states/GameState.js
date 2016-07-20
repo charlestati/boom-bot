@@ -23,7 +23,7 @@ class GameState extends Phaser.State {
 
     this.tilemap.setCollisionBetween(1, 10000, true, this.collisionsLayer);
 
-    // todo Fix players falling through the platforms after spawning
+    // todo Fix players passing through the platforms when going too fast
     this.setupPlayers();
 
     // todo Follow all the players
@@ -69,7 +69,9 @@ class GameState extends Phaser.State {
     this.updateHud();
   }
 
-  collisionHandler(player, bullet) {
+  collisionHandler(_player, bullet) {
+    const player = _player;
+
     if (bullet.shooter === player) {
       return;
     }
