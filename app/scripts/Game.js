@@ -6,8 +6,8 @@ import GameState from './states/GameState';
 class Game extends Phaser.Game {
   constructor() {
     const config = {
-      width: 800,
-      height: 600,
+      width: 1410,
+      height: 725,
       renderer: Phaser.AUTO,
       parent: 'boom',
       resolution: window.devicePixelRatio,

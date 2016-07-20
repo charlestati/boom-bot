@@ -16,9 +16,10 @@ class Humstar extends Player {
     this.sprite.anchor.x = 0.5;
     this.sprite.anchor.y = 0.5;
 
-    this.acceleration = 1000;
+    this.initialMaxVelocity = 500;
+    this.acceleration = 2000;
     this.sprite.body.drag.x = 300;
-    this.sprite.body.maxVelocity.x = 250;
+    this.sprite.body.maxVelocity.x = this.initialMaxVelocity;
     this.sprite.body.maxVelocity.y = 1000;
     this.sprite.body.gravity.y = 1500;
     this.sprite.body.bounce.y = 0;
@@ -33,14 +34,26 @@ class Humstar extends Player {
     this.weaponMagazine = 12;
     this.weaponReloadTime = 1500;
     this.ammo = this.weaponMagazine;
-    this.shootKnockback = 1200;
+    this.shootKnockback = 1200 * 30;
 
     this.fallPosition = this.sprite.y;
     this.falling = false;
 
-    this.shootSound = this.state.add.audio('shoot');
-    this.shellSound = this.state.add.audio('shell');
+    this.sounds = this.state.add.audio('sounds');
+    this.sounds.allowMultiple = true;
+    this.sounds.addMarker('shoot', 3, 0.7);
+    this.sounds.addMarker('explosion', 0, 2.0);
+    this.sounds.addMarker('winner', 5, 1.0);
+    this.sounds.addMarker('aced', 6, 1.0);
+    this.sounds.addMarker('yells', 7.5, 1.5);
+    this.sounds.addMarker('weee', 9, 1.0);
+    this.sounds.addMarker('awesome', 10.5, 1.2);
+    this.sounds.addMarker('wicked', 12.5, 1.0);
     this.reloadSound = this.state.add.audio('reload');
+
+    this.pin = this.state.add.audio('pin');
+    this.pin.allowMultiple = true;
+    this.pin.addMarker('throw', 0.5, 2);
 
     this.nextGrenade = 0;
     this.grenades = 3;
@@ -123,7 +136,6 @@ class Humstar extends Player {
     }
 
     if (this.controls.grenade.isDown && this.grenades > 0) {
-      console.log(this.grenadeStrength)
       if (this.grenadeStrength < this.grenadeStrengthMax) {
         this.grenadeStrength += 1;
       }
@@ -135,7 +147,8 @@ class Humstar extends Player {
   fire() {
     if (this.state.time.now < this.nextFire
       || this.state.time.now < this.reloadingEnd
-      || this.state.bullets.countDead() <= 0) {
+      || this.state.bullets.countDead() <= 0
+      || this.ammo <= 0) {
       return;
     }
 
@@ -143,16 +156,12 @@ class Humstar extends Player {
 
     const bullet = this.state.bullets.getFirstDead();
 
-    bullet.shootKnockback = this.shootKnockback * 30;
+    bullet.shootKnockback = this.shootKnockback;
     bullet.shooter = this.sprite;
 
+    // todo Sometimes bullets go below 0
     this.ammo -= 1;
-
-    this.shootSound.play();
-
-    this.state.time.events.add(Phaser.Timer.HALF, () => {
-      this.shellSound.play();
-    }, this);
+    this.sounds.play('shoot');
 
     if (this.ammo <= 0) {
       this.reloadingEnd = this.state.time.now + this.weaponReloadTime;
@@ -162,11 +171,11 @@ class Humstar extends Player {
     if (this.facing === 'left') {
       bullet.reset(this.sprite.x, this.sprite.y);
       bullet.body.velocity.x = this.bulletSpeed * -1;
-      this.sprite.body.acceleration.x = this.shootKnockback;
+      this.sprite.body.velocity.x = this.shootKnockback / 180;
     } else {
       bullet.reset(this.sprite.x, this.sprite.y);
       bullet.body.velocity.x = this.bulletSpeed;
-      this.sprite.body.acceleration.x = this.shootKnockback * -1;
+      this.sprite.body.velocity.x = this.shootKnockback / 180 * -1;
     }
   }
 
@@ -179,6 +188,8 @@ class Humstar extends Player {
 
     const grenade = this.state.grenades.getFirstDead();
     grenade.reset(this.sprite.x, this.sprite.y);
+
+    this.pin.play('throw');
 
     this.state.physics.arcade.velocityFromRotation(this.facing === 'right' ? -45 : -90,
       this.grenadeStrength * 10,
@@ -195,6 +206,7 @@ class Humstar extends Player {
         explosion.anchor.y = 0.8;
         explosion.animations.add('explode');
         explosion.animations.play('explode', 24, false, true);
+        this.sounds.play('explosion');
 
         const player = this.state.players[i];
         player.sprite.body.maxVelocity.x = 1000;
@@ -213,7 +225,7 @@ class Humstar extends Player {
         grenade.kill();
 
         this.state.time.events.add(Phaser.Timer.HALF, () => {
-          player.sprite.body.maxVelocity.x = 250;
+          player.sprite.body.maxVelocity.x = this.initialMaxVelocity;
         }, this);
       }
     }, this);
@@ -223,6 +235,10 @@ class Humstar extends Player {
     super.die();
     this.ammo = this.weaponMagazine;
     this.grenades = 3;
+    const names = ['aced', 'yells', 'weee', 'wicked', 'awesome'];
+    this.sounds.play(names[Math.floor(Math.random() * names.length)]);
+    this.sprite.body.checkCollision.down = true;
+    this.falling = false;
   }
 }
 

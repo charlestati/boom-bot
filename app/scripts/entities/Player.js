@@ -4,7 +4,7 @@ class Player {
     this.controls = controls;
     this.state = state;
 
-    this.spawnHeight = -2000;
+    this.spawnHeight = -1000;
 
     this.facing = 'right';
     this.acceleration = 600;
@@ -97,6 +97,7 @@ class Player {
   die() {
     this.lives -= 1;
     if (this.lives <= 0) {
+      this.sounds.play('winner');
       this.state.stop();
     } else {
       this.sprite.y = this.spawnHeight;

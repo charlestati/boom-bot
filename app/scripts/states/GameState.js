@@ -2,28 +2,37 @@ import Humstar from '../entities/Humstar';
 
 class GameState extends Phaser.State {
   create() {
-    this.bg = this.add.tileSprite(0, 0, 800, 600, 'background');
+    const width = 1410;
+    const height = 725;
+    const worldOffset = 100;
+    this.world.setBounds(-worldOffset, -worldOffset, 1410 + worldOffset, 725 + worldOffset);
+
+    this.bg = this.add.tileSprite(0, 0, 1410, 725, 'background');
     this.bg.fixedToCamera = true;
 
-    this.tilemap = this.add.tilemap('test');
+    const maps = ['arena', 'line'];
+    this.tilemap = this.add.tilemap(maps[Math.floor(Math.random() * maps.length)]);
     this.tilemap.addTilesetImage('tilesheet');
 
     this.platformsLayer = this.tilemap.createLayer('platforms');
-    this.platformsLayer.resizeWorld();
+    //this.platformsLayer.resizeWorld();
+
+    this.camera.focusOnXY((width - worldOffset) / 2, (height - worldOffset) / 2);
 
     this.collisionsLayer = this.tilemap.createLayer('collisions');
+
     this.tilemap.setCollisionBetween(1, 10000, true, this.collisionsLayer);
 
     // todo Fix players falling through the platforms after spawning
     this.setupPlayers();
 
     // todo Follow all the players
-    // this.camera.follow(this.players[0].sprite, Phaser.Camera.FOLLOW_PLATFORMER);
+    //this.camera.follow(this.players[0].sprite, Phaser.Camera.FOLLOW_PLATFORMER);
 
     this.setupBullets();
 
     this.music = this.add.audio('sonic1');
-    this.music.loopFull(1);
+    this.music.loopFull(0.8);
 
     this.hitSound = this.add.audio('hit');
 
@@ -151,24 +160,17 @@ class GameState extends Phaser.State {
   }
 
   setupHud() {
-    this.scoreText = this.add.text(10, 10, `Red: ${this.players[0].lives}
-Blue: ${this.players[1].lives}`,
-      {
-        font: '16px Arial',
-        fill: '#ffffff',
-      });
-    this.ammoText = this.add.text(100, 10, `Red: ${this.players[0].ammo} bullets
-Blue: ${this.players[1].ammo} bullets`,
-      {
-        font: '16px Arial',
-        fill: '#ffffff',
-      });
-    this.grenadesText = this.add.text(250, 10, `Red: ${this.players[0].grenades}
-Blue: ${this.players[1].grenades}`,
-      {
-        font: '16px Arial',
-        fill: '#ffffff',
-      });
+    this.scoreText = this.add.bitmapText(10, 0, 'nokia_white',
+      `Red: ${this.players[0].lives}
+Blue: ${this.players[1].lives}`, 16);
+
+    this.ammoText = this.add.bitmapText(100, 0, 'nokia_white',
+      `Red: ${this.players[0].ammo}
+Blue: ${this.players[1].ammo}`, 16);
+
+    this.grenadesText = this.add.bitmapText(250, 0, 'nokia_white',
+      `Red: ${this.players[0].grenades}
+Blue: ${this.players[1].grenades}`, 16);
   }
 
   updateHud() {
