@@ -1,9 +1,6 @@
 class MenuState extends Phaser.State {
   create() {
-    this.background = this.add.image(0, 0, 'underground');
-    this.background.scale.x = 3;
-    this.background.scale.y = 3;
-    this.background.smoothed = false;
+    this.bg = this.add.tileSprite(0, 0, 1410, 725, 'background');
 
     const centerX = this.world.width / 2;
     const centerY = this.world.height / 2;

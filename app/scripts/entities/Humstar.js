@@ -62,6 +62,7 @@ class Humstar extends Player {
     this.grenadeStrengthMax = 100;
   }
 
+  // todo Reload after 1 sec without shooting
   update() {
     super.update();
 
@@ -80,7 +81,6 @@ class Humstar extends Player {
     }
   }
 
-  // todo Reload after 1 sec without shooting
   listenGamepad() {
     super.listenGamepad();
 
@@ -106,6 +106,14 @@ class Humstar extends Player {
       || this.controls.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1) {
       this.sprite.angle = 20;
       this.facing = 'right';
+    }
+
+    if (this.controls.pad.isDown(Phaser.Gamepad.XBOX360_RIGHT_BUMPER)) {
+      if (this.grenadeStrength < this.grenadeStrengthMax) {
+        this.grenadeStrength += 4;
+      }
+    } else if (this.grenadeStrength > 0) {
+      this.throwGrenade(this.grenadeStrength);
     }
   }
 
